@@ -1,25 +1,25 @@
 name: Playwright Parallel Tests
 
-on: push
+on:
+  push:
+    branches:
+      - main
 
 jobs:
   build:
-    runs-on: windows-latest
-    strategy:
-      matrix:
-        node-version: [14.21.3]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+    runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-    - name: Install library
-      run: |
-        npm i
-        npx playwright install
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+
+      - name: Install Dependencies
+        run: npm install
 
   test:
     needs: build
@@ -27,19 +27,19 @@ jobs:
       matrix:
         test_suite: ["login", "customer"]
     runs-on: ubuntu-latest
-     steps:
-    - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-    - name: Install library
-      run: |
-        npm i
-        npx playwright install
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
 
       - name: Install Dependencies
-        run: npm install
+        run: |
+          npm i
+          npx playwright install
 
       - name: Run Tests for ${{ matrix.test_suite }} Suite
         run: npx playwright test tests/${{ matrix.test_suite }}
